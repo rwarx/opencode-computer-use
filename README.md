@@ -1,5 +1,7 @@
 # OpenCode Computer Use — local Codex-style visual desktop control for Windows
 
+[Русский](README.ru.md) · [Español](README.es.md) · [Deutsch](README.de.md) · [中文](README.zh.md)
+
 MCP server (stdio) that gives OpenCode **eyes + hands** on a Windows PC:
 screenshots, DPI-correct mouse, Unicode keyboard, window management,
 UI Automation, OCR fallback, batch actions, wait/verify primitives, and a
@@ -116,8 +118,6 @@ window, and optionally the next screenshot inline.
 ## Examples
 
 Notepad end-to-end (real verified loop):
-
-![notepad demo](docs/images/02-notepad-demo.png)
 
 ```text
 hotkey WIN+R → type "notepad" → key ENTER → wait_for_window "Notepad"

@@ -1,5 +1,7 @@
 # OpenCode Computer Use — локальный визуальный контроль Windows-ПК
 
+[English](README.md) · [Español](README.es.md) · [Deutsch](README.de.md) · [中文](README.zh.md)
+
 MCP-сервер (stdio), дающий OpenCode **«глаза и руки»**: скриншоты,
 DPI-корректная мышь, Unicode-клавиатура (латиница + кириллица), управление
 окнами, UI Automation, OCR-fallback, batch-действия, ожидания/проверки,
@@ -125,8 +127,6 @@ UIA: `computer_ui_tree/find_element/invoke_element`.
 ## Примеры
 
 Notepad end-to-end (реально проверено):
-
-![демо notepad](docs/images/02-notepad-demo.png)
 
 ```text
 hotkey WIN+R → type "notepad" → key ENTER → wait_for_window "Notepad"

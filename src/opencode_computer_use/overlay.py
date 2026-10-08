@@ -62,7 +62,7 @@ class _OverlayThread(threading.Thread):
         self._title.pack(anchor="w")
         self._sub = tk.Label(texts, fg=SUB, bg=BG, font=("Segoe UI", 9))
         self._sub.pack(anchor="w")
-        self._sub.config(text="Do not touch mouse / keyboard \u2014 \u043d\u0435 \u043c\u0435\u0448\u0430\u0439\u0442\u0435")
+        self._sub.config(text="Do not touch mouse / keyboard")
         # Alpha-based visibility: the window stays mapped from birth (this is
         # the only reliably-working path for overrideredirect on Win10).
         # Hidden = fully transparent; shown = 0.94. Never withdraw/deiconify.
