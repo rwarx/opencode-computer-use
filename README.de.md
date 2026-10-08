@@ -96,7 +96,7 @@ In `opencode.json` (siehe `opencode.json.example`):
 
 OpenCode neu starten → `computer_*`-Tools erscheinen.
 
-## Tools (35)
+## Tools (36)
 
 Screen: `computer_screenshot`, `computer_list_monitors`.
 Maus: `computer_mouse_move/click/double_click/down/up/drag/scroll/position`.

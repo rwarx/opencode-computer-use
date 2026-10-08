@@ -96,7 +96,7 @@ En `opencode.json` (ver `opencode.json.example`):
 
 Reinicia OpenCode → aparecen las herramientas `computer_*`.
 
-## Herramientas (35)
+## Herramientas (36)
 
 Pantalla: `computer_screenshot`, `computer_list_monitors`.
 Ratón: `computer_mouse_move/click/double_click/down/up/drag/scroll/position`.

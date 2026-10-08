@@ -1,6 +1,13 @@
 # Changelog
 
-## 0.1.1 — 2026-10-08
+## 0.1.2 — 2026-10-08
+
+- New: `computer_screenshot_annotated` (set-of-marks) — numbered badges on
+  clickable elements from UI Automation; agent says "click #7" with exact
+  coords instead of guessing pixels (36 tools total)
+- UIA garbage-rect filtering (virtualized/offscreen items) + per-monitor
+  bounds so other screens don't eat the mark budget
+- 34 automated pytest tests (added annotate mapping + annotated protocol test)
 
 - Faster screenshots: bilinear downscale (was Lanczos), PNG `compress_level=3`
   (was 6), new `COMPUTER_USE_RESAMPLE` / `COMPUTER_USE_PNG_COMPRESS` knobs

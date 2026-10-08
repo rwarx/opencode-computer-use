@@ -1,6 +1,6 @@
 [project]
 name = "opencode-computer-use"
-version = "0.1.1"
+version = "0.1.2"
 description = "OpenCode Computer Use — local Codex-style visual desktop control for Windows (MCP stdio)"
 readme = "README.md"
 requires-python = ">=3.10"

@@ -22,7 +22,7 @@ from .config import Settings, log
 from .coords import enforce_single_monitor, model_to_screenshot, screenshot_to_virtual
 from .monitors import get_monitor, list_monitors, monitor_at_point
 
-server = MCPServer("opencode-computer-use", version="0.1.1")
+server = MCPServer("opencode-computer-use", version="0.1.2")
 
 
 # ---------- helpers ----------
@@ -459,6 +459,55 @@ def computer_find_text(text: str, monitor: int | str = 0, scale: float = 1.0) ->
 
 @server.tool()
 @safe
+def computer_screenshot_annotated(monitor: int | str = 0, hwnd: int | None = None,
+                                  max_marks: int = 40) -> list:
+    """Screenshot with numbered badges on clickable elements (set-of-marks).
+    Say 'click #7' using returned mx/my (model px) instead of guessing pixels.
+    Marks come from UI Automation (exact rects); falls back to plain screenshot
+    when UIA is unavailable."""
+    import json
+    from . import annotate as _ann
+    mons, is_all = _resolve_capture_monitor(monitor)
+    if is_all:
+        cap = _cap.capture_all(mons, scale=1.0)
+    else:
+        cap = _cap.capture_monitor(mons[0], scale=1.0)
+    try:
+        import time as _t
+        _t0 = _t.perf_counter()
+        if is_all:
+            from .monitors import get_virtual_desktop as _vd
+            _v = _vd()
+            bounds = (_v.x, _v.y, _v.width, _v.height)
+        else:
+            _m = mons[0]
+            bounds = (_m.x, _m.y, _m.width, _m.height)
+        marks = _ann.collect_marks(hwnd, int(max_marks), bounds)
+        log.debug(f"marks collected in {_t.perf_counter()-_t0:.1f}s")
+    except Exception as e:  # noqa: BLE001
+        return [TextContent(type="text",
+                            text=f"UIA unavailable ({e}); use computer_screenshot. "
+                                 f"{_shot_text(cap)}")]
+    png, out_scale, model_marks = _ann.annotate_capture(cap, marks)
+    import base64
+    visible = [m for m in model_marks if m["mx"] >= 0]
+    table = "\n".join(
+        f"#{m['id']} {m['control_type']} {m['name']!r:.50} at ({m['mx']},{m['my']})"
+        for m in visible)
+    log.info(f"Screenshot annotated monitor={monitor} marks={len(visible)}")
+    return [TextContent(type="text",
+                        text=f"Annotated screenshot: {len(visible)} marks "
+                             f"(model {int(cap.width*out_scale)}x"
+                             f"{int(cap.height*out_scale)}, scale={out_scale:.3f}). "
+                             f"To click #N: use its (mx,my) as model coords "
+                             f"(native = mx/{out_scale:.3f} + origin).\n"
+                             f"{table}\n{_active_ctx()}"),
+            ImageContent(type="image", data=base64.b64encode(png).decode(),
+                         mimeType="image/png")]
+
+
+@server.tool()
+@safe
 def computer_click_text(text: str, monitor: int | str = 0, button: str = "left",
                         screenshot_after: bool = True) -> list:
     """Find text via OCR and click its center."""
@@ -701,7 +750,7 @@ def computer_overlay_hide() -> str:
 
 
 def main() -> None:
-    log.info(f"computer-use MCP v0.1.1 single_monitor={Settings.single_monitor_mode()} "
+    log.info(f"computer-use MCP v0.1.2 single_monitor={Settings.single_monitor_mode()} "
              f"monitor={Settings.locked_monitor()} autonomous={Settings.autonomous()}")
     server.run(transport="stdio")
 

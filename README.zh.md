@@ -95,7 +95,7 @@ Windows：需要**活动的桌面会话**（未锁屏）。不需要管理员权
 
 重启 OpenCode → 出现 `computer_*` 工具。
 
-## 工具（35 个）
+## 工具（36 个）
 
 屏幕：`computer_screenshot`、`computer_list_monitors`。
 鼠标：`computer_mouse_move/click/double_click/down/up/drag/scroll/position`。

@@ -68,7 +68,7 @@ def client():
     c.send({"jsonrpc": "2.0", "method": "notifications/initialized"})
     c.send({"jsonrpc": "2.0", "id": -1, "method": "tools/list", "params": {}})
     tools = c.read()["result"]["tools"]
-    assert len(tools) == 35, [t["name"] for t in tools]
+    assert len(tools) == 36, [t["name"] for t in tools]
     yield c
     c.close()
 
@@ -150,3 +150,16 @@ def test_safe_mode_refuses_risky_type(client):
                             {"text": "shutdown computer now",
                              "screenshot_after": False}))
     assert "REFUSED" in txt
+
+
+def test_annotated_screenshot(client):
+    import base64
+    content = client.call("computer_screenshot_annotated",
+                          {"monitor": 1, "max_marks": 15})
+    kinds = {c["type"] for c in content}
+    assert {"text", "image"} <= kinds
+    txt = _text(content)
+    assert "marks" in txt
+    img = next(c for c in content if c["type"] == "image")
+    raw = base64.b64decode(img["data"])
+    assert raw[:8] == b"\x89PNG\r\n\x1a\n"

@@ -99,7 +99,7 @@ pip install -e ".[all]"    # всё сразу
 Перезапустите OpenCode → появятся `computer_*` инструменты. Проверка:
 «покажи мониторы» → `computer_list_monitors`.
 
-## Инструменты (35)
+## Инструменты (36)
 
 Экран/мониторы: `computer_screenshot`, `computer_list_monitors`.
 Мышь: `computer_mouse_move/click/double_click/down/up/drag/scroll/position`.

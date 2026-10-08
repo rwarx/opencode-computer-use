@@ -30,6 +30,8 @@ No cloud services. No shell execution. GUI control only.
   `computer_invoke_element` (optional `comtypes`, offline)
 - Element priority: **UIA → OCR → visual coordinates**
 - `screenshot_after` on actions: result screenshot inline, no extra tool call
+- `computer_screenshot_annotated` — set-of-marks: numbered badges on clickable
+  elements (UIA exact rects), say "click #7" instead of guessing pixels
 - `computer_batch` — sequential actions, stops on first error
 - `computer_wait`, `computer_wait_for_text`, `computer_wait_for_window`,
   `computer_element_exists`
@@ -100,9 +102,10 @@ Add to `opencode.json` (see `opencode.json.example`):
 Then: restart OpenCode → `computer_*` tools appear. Verify with
 “list my monitors” → `computer_list_monitors`.
 
-## Available tools (35)
+## Available tools (36)
 
-Screen/monitors: `computer_screenshot`, `computer_list_monitors`.
+Screen/monitors: `computer_screenshot`, `computer_screenshot_annotated`,
+`computer_list_monitors`.
 Mouse: `computer_mouse_move/click/double_click/down/up/drag/scroll/position`.
 Keyboard: `computer_type/key/hotkey/key_down/key_up`.
 Windows: `computer_list_windows/get_active_window/focus_window/minimize_window/maximize_window/restore_window`.
