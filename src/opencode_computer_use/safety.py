@@ -17,7 +17,9 @@ from .config import Settings, log
 _stop = threading.Event()
 
 RISKY_PATTERNS = [
-    re.compile(r"\b(shutdown|reboot|restart|format\s+[a-z]:|diskpart|rm\s+-rf|del\s+/[fsq])\b", re.I),
+    # NOTE: no trailing \b — alternatives ending in non-word chars
+    # (e.g. "format D:", "del /f") would never match with it.
+    re.compile(r"\b(shutdown|reboot|restart|format\s+[a-z]:|diskpart|rm\s+-rf|del\s+/[fsq])", re.I),
     re.compile(r"(rm\s+-rf\s+/(home|root|\*)|mkfs|:?\(\)\s*\{\s*:\|\:&\s*\})", re.I),
     re.compile(r"\b(drop\s+table|delete\s+from\s+\w+)\b", re.I),
     re.compile(r"(buy\s+now|place\s+order|confirm\s+purchase|send\s+payment|transfer\s+money)", re.I),

@@ -1,6 +1,15 @@
 # Changelog
 
-## 0.1.0 — 2026-10-08
+## 0.1.1 — 2026-10-08
+
+- Faster screenshots: bilinear downscale (was Lanczos), PNG `compress_level=3`
+  (was 6), new `COMPUTER_USE_RESAMPLE` / `COMPUTER_USE_PNG_COMPRESS` knobs
+- Fixed JPEG screenshots mislabeled as `image/png` (now `image/jpeg`)
+- Fixed risky-text filter missing `format D:` (trailing `\b` bug, caught by tests)
+- 29 automated pytest tests: coords, safety policy, keyboard mapping, live MCP
+  protocol (PNG+JPEG magic bytes, overlay, e-stop, batch, safe-mode refusal)
+- `tests/bench_shots.py` benchmark; fast-loop recipe `scale=0.5 + jpeg=true`
+  (~30 ms / ~0.1 MB vs ~120 ms / ~2.1 MB default)
 
 First public release. Verified live on Windows 10 (dual-monitor).
 

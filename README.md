@@ -178,11 +178,33 @@ Batch:
 ```powershell
 pip install -e ".[all]"      # + pytest
 python -m pytest tests/test_coords.py -q
-python tests/e2e_mcp_calls.py   # protocol + tools smoke (moves mouse harmlessly)
-COMPUTER_USE_SINGLE_MONITOR=1 COMPUTER_USE_MONITOR=1 python tests/e2e_lock.py
+python tests/e2e_mcp_calls.py
+$env:COMPUTER_USE_SINGLE_MONITOR=1; $env:COMPUTER_USE_MONITOR=1; python tests/e2e_lock.py
 python tests/e2e_notepad.py     # full Notepad save-to-Desktop acceptance loop
 python tests/e2e_cyrillic.py    # byte-exact Cyrillic roundtrip
 ```
+
+`python -m pytest tests/ -q` runs the automated suite (29 tests, ~2 s):
+coordinate math, safety policy, keyboard mapping, and live MCP protocol
+tests against a spawned server (monitors, screenshots PNG+JPEG, overlay,
+emergency stop, batch, safe-mode refusal). Manual scripts (`e2e_*`,
+`demo_*`, `bench_shots.py`, `make_shots.py`) are utilities, not collected.
+
+## Performance
+
+Measured on 1920×1080 (mss grab ~16 ms):
+
+| Shot | Time | Size (base64) |
+|---|---|---|
+| Full PNG (default) | ~120 ms | ~2.1 MB |
+| `scale=0.5` PNG | ~60 ms | ~0.9 MB |
+| `scale=0.5` + `jpeg=true` | **~30 ms** | **~0.1 MB** |
+
+Tuning: downscale filter `COMPUTER_USE_RESAMPLE` (`bilinear` default, ~2×
+faster than `lanczos`, no VLM grounding loss), PNG
+`COMPUTER_USE_PNG_COMPRESS` (default 3: ~1.6× faster encode than 6, +3%
+size). Fast agent-loop recipe: `scale: 0.5, jpeg: true` — ~6× faster,
+~25× smaller. Benchmark: `python tests/bench_shots.py`.
 
 Environment variables: `COMPUTER_USE_LOG_LEVEL` (ERROR/WARN/INFO/DEBUG),
 `COMPUTER_USE_SINGLE_MONITOR`, `COMPUTER_USE_MONITOR`,

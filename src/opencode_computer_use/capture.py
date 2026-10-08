@@ -18,19 +18,24 @@ from .coords import MonitorInfo
 
 class CaptureResult:
     def __init__(self, png: bytes, width: int, height: int, scale: float,
-                 monitor: MonitorInfo | None, region=None):
+                 monitor: MonitorInfo | None, region=None, mime: str = "image/png"):
         self.png = png
         self.width = width
         self.height = height
         self.scale = scale  # out/native; model divides by scale via model_to_screenshot
         self.monitor = monitor
         self.region = region
+        self.mime = mime
 
     def b64(self) -> str:
         return base64.b64encode(self.png).decode("ascii")
 
 
-def _to_png(img: Image.Image, scale: float, max_width: int, jpeg: bool = False) -> tuple[bytes, float, int, int]:
+_RESAMPLE = {"bilinear": Image.BILINEAR, "bicubic": Image.BICUBIC,
+             "lanczos": Image.LANCZOS, "nearest": Image.NEAREST}
+
+
+def _to_png(img: Image.Image, scale: float, max_width: int, jpeg: bool = False):
     native_w, native_h = img.size
     target_w = min(native_w, max_width)
     eff_scale = target_w / native_w if native_w else 1.0
@@ -40,16 +45,15 @@ def _to_png(img: Image.Image, scale: float, max_width: int, jpeg: bool = False) 
     else:
         s = eff_scale
     if s < 1.0:
-        img = img.resize((max(1, int(native_w * s)), max(1, int(native_h * s))), Image.LANCZOS)
+        filt = _RESAMPLE.get(Settings.resample(), Image.BILINEAR)
+        img = img.resize((max(1, int(native_w * s)), max(1, int(native_h * s))), filt)
     buf = io.BytesIO()
     if jpeg:
         img.convert("RGB").save(buf, "JPEG", quality=Settings.jpeg_quality())
-        mime_note = "jpeg"
-    else:
-        img.save(buf, "PNG")
-        mime_note = "png"
-    log.debug(f"capture encoded {mime_note} {img.size[0]}x{img.size[1]} scale={s:.3f}")
-    return buf.getvalue(), s, img.size[0], img.size[1]
+        return buf.getvalue(), s, img.size[0], img.size[1], "image/jpeg"
+    img.save(buf, "PNG", compress_level=Settings.png_compress())
+    log.debug(f"capture encoded png {img.size[0]}x{img.size[1]} scale={s:.3f}")
+    return buf.getvalue(), s, img.size[0], img.size[1], "image/png"
 
 
 def capture_monitor(monitor: MonitorInfo, scale: float = 1.0,
@@ -66,8 +70,8 @@ def capture_monitor(monitor: MonitorInfo, scale: float = 1.0,
                     "width": monitor.width, "height": monitor.height}
         shot = sct.grab(grab)
         img = Image.frombytes("RGB", shot.size, shot.bgra, "raw", "BGRX")
-    png, eff, w, h = _to_png(img, scale, Settings.max_screenshot_width(), jpeg)
-    return CaptureResult(png, w, h, eff, monitor, region)
+    png, eff, w, h, mime = _to_png(img, scale, Settings.max_screenshot_width(), jpeg)
+    return CaptureResult(png, w, h, eff, monitor, region, mime)
 
 
 def capture_all(monitors: list[MonitorInfo], scale: float = 1.0,
@@ -81,8 +85,8 @@ def capture_all(monitors: list[MonitorInfo], scale: float = 1.0,
         shot = sct.grab({"left": min_x, "top": min_y,
                          "width": max_r - min_x, "height": max_b - min_y})
         img = Image.frombytes("RGB", shot.size, shot.bgra, "raw", "BGRX")
-    png, eff, w, h = _to_png(img, scale, Settings.max_screenshot_width(), jpeg)
-    return CaptureResult(png, w, h, eff, None, None)
+    png, eff, w, h, mime = _to_png(img, scale, Settings.max_screenshot_width(), jpeg)
+    return CaptureResult(png, w, h, eff, None, None, mime)
 
 
 def capture_window_rect(vrect: tuple[int, int, int, int], scale: float = 1.0) -> CaptureResult:
@@ -90,5 +94,5 @@ def capture_window_rect(vrect: tuple[int, int, int, int], scale: float = 1.0) ->
     with mss.mss() as sct:
         shot = sct.grab({"left": x, "top": y, "width": w, "height": h})
         img = Image.frombytes("RGB", shot.size, shot.bgra, "raw", "BGRX")
-    png, eff, ow, oh = _to_png(img, scale, Settings.max_screenshot_width())
-    return CaptureResult(png, ow, oh, eff, None, (x, y, w, h))
+    png, eff, ow, oh, mime = _to_png(img, scale, Settings.max_screenshot_width())
+    return CaptureResult(png, ow, oh, eff, None, (x, y, w, h), mime)

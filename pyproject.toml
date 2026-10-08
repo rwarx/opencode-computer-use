@@ -1,6 +1,6 @@
 [project]
 name = "opencode-computer-use"
-version = "0.1.0"
+version = "0.1.1"
 description = "OpenCode Computer Use — local Codex-style visual desktop control for Windows (MCP stdio)"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -14,7 +14,6 @@ dependencies = [
   "mss>=9.0",
   "Pillow>=10.0",
 ]
-authors = [{ name = "opencode-computer-use" }]
 
 [project.optional-dependencies]
 ocr = ["rapidocr-onnxruntime>=1.3"]

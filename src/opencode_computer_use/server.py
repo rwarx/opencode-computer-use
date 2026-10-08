@@ -22,7 +22,7 @@ from .config import Settings, log
 from .coords import enforce_single_monitor, model_to_screenshot, screenshot_to_virtual
 from .monitors import get_monitor, list_monitors, monitor_at_point
 
-server = MCPServer("opencode-computer-use", version="0.1.0")
+server = MCPServer("opencode-computer-use", version="0.1.1")
 
 
 # ---------- helpers ----------
@@ -100,7 +100,7 @@ def _shot_text(cap: CaptureResult) -> str:
 
 
 def _img(cap: CaptureResult) -> ImageContent:
-    return ImageContent(type="image", data=cap.b64(), mimeType="image/png")
+    return ImageContent(type="image", data=cap.b64(), mimeType=cap.mime)
 
 
 def safe(fn):
@@ -132,7 +132,8 @@ def _maybe_shot(screenshot_after: bool, monitor, scale: float = 1.0):
 def computer_screenshot(monitor: int | str = 0, region: dict | list | None = None,
                         scale: float = 1.0, jpeg: bool = False) -> list:
     """Capture a screenshot. monitor: id or 'all'. region: {x,y,w,h} monitor-local px.
-    Returns text context + PNG image. Model coords map to native via /scale."""
+    Returns text context + PNG image. Model coords map to native via /scale.
+    FAST LOOP: scale=0.5 + jpeg=true is ~6x faster and ~25x smaller."""
     mons, is_all = _resolve_capture_monitor(monitor)
     rg = _parse_region(region)
     if is_all:
@@ -700,7 +701,7 @@ def computer_overlay_hide() -> str:
 
 
 def main() -> None:
-    log.info(f"computer-use MCP v0.1.0 single_monitor={Settings.single_monitor_mode()} "
+    log.info(f"computer-use MCP v0.1.1 single_monitor={Settings.single_monitor_mode()} "
              f"monitor={Settings.locked_monitor()} autonomous={Settings.autonomous()}")
     server.run(transport="stdio")
 
