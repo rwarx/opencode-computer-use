@@ -1,0 +1,21 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "computer-use": {
+      "type": "local",
+      "command": ["python", "-m", "opencode_computer_use"],
+      "cwd": "C:\\path\\to\\opencode-computer-use",
+      "enabled": true,
+      "timeout": 60000,
+      "environment": {
+        "COMPUTER_USE_LOG_LEVEL": "INFO",
+        "COMPUTER_USE_SINGLE_MONITOR": "0",
+        "COMPUTER_USE_MONITOR": "0",
+        "COMPUTER_USE_AUTONOMOUS": "0",
+        "COMPUTER_USE_MAX_WIDTH": "1920",
+        "COMPUTER_USE_OVERLAY_AUTO": "1",
+        "COMPUTER_USE_OVERLAY_IDLE_SEC": "10"
+      }
+    }
+  }
+}

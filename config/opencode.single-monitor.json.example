@@ -1,0 +1,19 @@
+# Single-monitor lock: agent physically cannot leave monitor 1.
+# Screenshot is taken only from monitor 1, all mouse input is clamped.
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "computer-use-right": {
+      "type": "local",
+      "command": ["python", "-m", "opencode_computer_use"],
+      "cwd": "C:\\path\\to\\opencode-computer-use",
+      "enabled": true,
+      "timeout": 60000,
+      "env": {
+        "COMPUTER_USE_SINGLE_MONITOR": "1",
+        "COMPUTER_USE_MONITOR": "1",
+        "COMPUTER_USE_AUTONOMOUS": "0"
+      }
+    }
+  }
+}
